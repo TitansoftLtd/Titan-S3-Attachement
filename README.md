@@ -1,5 +1,3 @@
-<a href="https://zerodha.tech"><img src="https://zerodha.tech/static/images/github-badge.svg" align="right" /></a>
-
 ## Frappe S3 Attachment
 
 Frappe app to make file upload automatically upload and read from s3.
@@ -17,8 +15,8 @@ Frappe app to make file upload automatically upload and read from s3.
 
 #### Installation.
 
-1. bench get-app https://github.com/zerodhatech/Frappe-attachments-s3.git
-2. bench install-app frappe_s3_attachment
+1. bench get-app https://github.com/TitansoftLtd/Titan-S3-Attachement.git
+2. bench --site {site-name} install-app frappe_s3_attachment
 
 #### Configuration Setup.
 
