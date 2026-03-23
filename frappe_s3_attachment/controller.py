@@ -227,18 +227,25 @@ def file_upload_to_s3(doc, method):
                 key
             )
         os.remove(file_path)
-        frappe.db.sql("""UPDATE `tabFile` SET file_url=%s, folder=%s,
-            old_parent=%s, content_hash=%s WHERE name=%s""", (
-            file_url, 'Home/Attachments', 'Home/Attachments', key, doc.name))
+        file_doc = frappe.get_doc("File", doc.name)
+
+        file_doc.file_url = file_url
+        file_doc.folder = 'Home/Attachments'
+        file_doc.old_parent = 'Home/Attachments'
+        file_doc.content_hash = key
+        file_doc.save(ignore_version=True)
 
         doc.file_url = file_url
 
-        if parent_doctype and frappe.get_meta(parent_doctype).get('image_field'):
-            frappe.db.set_value(parent_doctype, parent_name, frappe.get_meta(
-                parent_doctype).get('image_field'), file_url)
+        image_field = frappe.get_meta(parent_doctype).get('image_field')
 
-        frappe.db.commit()
-
+        if image_field and parent_name:
+            try:
+                parent_doc = frappe.get_doc(parent_doctype, parent_name)
+                parent_doc.set(image_field, file_url)
+                parent_doc.save(ignore_permissions=True, ignore_version=True)
+            except Exception:
+                pass
 
 @frappe.whitelist()
 def generate_file(key=None, file_name=None):
