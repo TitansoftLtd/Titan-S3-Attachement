@@ -227,25 +227,28 @@ def file_upload_to_s3(doc, method):
                 key
             )
         os.remove(file_path)
-        file_doc = frappe.get_doc("File", doc.name)
-
-        file_doc.file_url = file_url
-        file_doc.folder = 'Home/Attachments'
-        file_doc.old_parent = 'Home/Attachments'
-        file_doc.content_hash = key
-        file_doc.save(ignore_version=True)
+        frappe.db.set_value("File", doc.name, {
+            "file_url": file_url,
+            "folder": "Home/Attachments",
+            "old_parent": "Home/Attachments",
+            "content_hash": key
+        }, update_modified=False)
 
         doc.file_url = file_url
-
+        
         image_field = frappe.get_meta(parent_doctype).get('image_field')
 
         if image_field and parent_name:
-            try:
-                parent_doc = frappe.get_doc(parent_doctype, parent_name)
-                parent_doc.set(image_field, file_url)
-                parent_doc.save(ignore_permissions=True, ignore_version=True)
-            except Exception:
-                pass
+            frappe.db.set_value(
+                parent_doctype,
+                parent_name,
+                image_field,
+                file_url,
+                update_modified=False
+            )
+
+      
+
 
 @frappe.whitelist()
 def generate_file(key=None, file_name=None):
