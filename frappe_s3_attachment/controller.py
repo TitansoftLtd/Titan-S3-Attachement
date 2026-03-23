@@ -235,20 +235,17 @@ def file_upload_to_s3(doc, method):
         }, update_modified=False)
 
         doc.file_url = file_url
-        
+
         image_field = frappe.get_meta(parent_doctype).get('image_field')
 
-        if image_field and parent_name:
+        if image_field and parent_name and parent_name != doc.attached_to_name:
             frappe.db.set_value(
                 parent_doctype,
                 parent_name,
                 image_field,
                 file_url,
                 update_modified=False
-            )
-
-      
-
+    )
 
 @frappe.whitelist()
 def generate_file(key=None, file_name=None):
