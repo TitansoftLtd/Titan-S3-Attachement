@@ -193,6 +193,10 @@ def file_upload_to_s3(doc, method):
     """
     if doc.attached_to_doctype == "Prepared Report":
         return
+    
+    # Skip SCORM / LMS zip files
+    if doc.file_name and doc.file_name.endswith(".zip"):
+        return
 
     s3_upload = S3Operations()
     path = doc.file_url
@@ -200,7 +204,7 @@ def file_upload_to_s3(doc, method):
     parent_doctype = doc.attached_to_doctype or 'File'
     parent_name = doc.attached_to_name or doc.name
     ignore_s3_upload_for_doctype = frappe.local.conf.get(
-        'ignore_s3_upload_for_doctype') or ['Data Import', 'Repost Item Valuation', 'Course Chapter']
+        'ignore_s3_upload_for_doctype') or ['Data Import', 'Repost Item Valuation']
     if parent_doctype not in ignore_s3_upload_for_doctype:
         if not doc.is_private:
             file_path = site_path + '/public' + path
