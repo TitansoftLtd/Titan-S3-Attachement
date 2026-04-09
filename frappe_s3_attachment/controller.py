@@ -200,7 +200,7 @@ def file_upload_to_s3(doc, method):
     parent_doctype = doc.attached_to_doctype or 'File'
     parent_name = doc.attached_to_name or doc.name
     ignore_s3_upload_for_doctype = frappe.local.conf.get(
-        'ignore_s3_upload_for_doctype') or ['Data Import', 'Repost Item Valuation']
+        'ignore_s3_upload_for_doctype') or ['Data Import', 'Repost Item Valuation', 'Courses']
     if parent_doctype not in ignore_s3_upload_for_doctype:
         if not doc.is_private:
             file_path = site_path + '/public' + path
