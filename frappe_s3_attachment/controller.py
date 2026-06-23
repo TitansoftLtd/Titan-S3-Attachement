@@ -193,9 +193,13 @@ def file_upload_to_s3(doc, method):
     """
     if doc.attached_to_doctype == "Prepared Report":
         return
-    
     # Skip SCORM / LMS zip files
     if doc.file_name and doc.file_name.endswith(".zip"):
+        return
+
+    local_only_fields = frappe.local.conf.get(
+        'ignore_s3_upload_for_field') or ['bank_statement_local']
+    if doc.attached_to_field and doc.attached_to_field in local_only_fields:
         return
 
     s3_upload = S3Operations()
